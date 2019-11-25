@@ -5,10 +5,10 @@ import random
 pygame.init()
 
 #Game variables
-white=(255,255,255)
+white=(84,62,62)
 black=(0,0,0)
 cyan = (0,226,255)
-
+red = (255,0,0)
 #screen size
 x=600
 y=600
@@ -17,11 +17,14 @@ y=600
 block_size=30
 
 #global variable
+snake_x=300
+snake_y=300
+snake_coordinates=[[snake_x,snake_y]]
 eaten =  1
-snake_coordinates = [[300,300]]
 refresh_rate = pygame.time.Clock()
 snake_velocity_x = 0
 snake_velocity_y = 0
+snake_length=[1]
 velocity = 30
 food_coordinates= [245,245]
 
@@ -70,52 +73,32 @@ def get_food_coordinate(food_coordinates) :
 
 ##############################
 #change the function name
-def check(food_coordinates,snake_coordinates):
+def check(food_coordinates,snake_coordinates,snake_length):
     x1 = food_coordinates[0]
     y1 = food_coordinates[1]
     x2 = snake_coordinates[0][0]
     y2 = snake_coordinates[0][1]
     if( abs(x1-x2)<10 and abs(y1-y2)<10):
+        snake_length[0]+=1
         get_food_coordinate(food_coordinates)
 
 
 ##############################
 
-
 class food:
-
     def draw_food(self,x,y):
-
-           image = pygame.image.load("food.png")
-           display_window.blit(image,(x,y))
+            pygame.draw.rect(display_window,red,[x,y,20,20])
+           #image = pygame.image.load("food.png")
+           #display_window.blit(image,(x,y))
               # food is eaten
 
-
-
 class snake:
-
-
-
-    def draw_snake(self,list,display):   #here list is for coordinates of body
-        snake_coordinates[0][0] += snake_velocity_x
-        snake_coordinates[0][1] += snake_velocity_y
-        for x,y in list:
+    def draw_snake(self,list_coor,display):   #here list is for coordinates of body
+        for x,y in list_coor:
             pygame.draw.rect(display,cyan,[x,y,30,30])
-
-
-
-
     #head
 
-
-
     #body
-
-
-
-
-
-
 #Build body of snake
 #def snake_body:
  #   pygame.draw.rect(display_window,black,)
@@ -147,26 +130,22 @@ while not quit_game:
             if event.key == pygame.K_UP and snake_velocity_y==0:
                 snake_velocity_x = 0
                 snake_velocity_y = -velocity
-
+    snake_x+=snake_velocity_x
+    snake_y+=snake_velocity_y
     display_window.fill(black)
-
-    grid(x,20,display_window)
-
-    check(food_coordinates,snake_coordinates)
-    print(food_coordinates)
-
     food.draw_food(food_coordinates[0],food_coordinates[1])
-
+    
+    check(food_coordinates,snake_coordinates,snake_length)
+    grid(x,20,display_window)
+    temp_list=[]
+    temp_list.append(snake_x)
+    temp_list.append(snake_y)
+    snake_coordinates.append(temp_list)
+    if len(snake_coordinates)>snake_length[0]:
+        del snake_coordinates[0]
     snake.draw_snake(snake_coordinates, display_window)
-
-
-
-
     pygame.display.update()
-
-
-
-    refresh_rate.tick(7)
+    refresh_rate.tick(10)
 
 pygame.quit()
 quit()
