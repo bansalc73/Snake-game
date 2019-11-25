@@ -1,38 +1,36 @@
-import pygame
 pygame.init()
 
-# Colors
-red=(255,0,0)
-green=(0,255,0)
-blue=(0,0,255)
+#Game variables
 white=(255,255,255)
 black=(0,0,0)
-
-# Game variables
+x=600
+y=600
+block_size=10
 quit_game=False
-game_over=False
-screen_width=500
-screen_height=500
-x_snake=200
-y_snake=200
-snake_size=20
 
-window=pygame.display.set_mode((screen_width,screen_height))
+#Window and title display
+display_window=pygame.display.set_mode((x,y))
 pygame.display.set_caption("Snake Game")
 pygame.display.update()
 
+#draw grid
+def grid(w,rows,surface):
+    sizeBtn=w//rows
+    i=0
+    j=0
+    for k in range(rows):
+        i+=sizeBtn
+        j+=sizeBtn
 
+        pygame.draw.line(surface,white,(i,0),(i,w))
+        pygame.draw.line(surface,white,(0,j),(w,j))
+        pygame.draw.line(surface,white,(0,0),(w,0))
+        pygame.draw.line(surface,white,(w,0),(w,w))
+        pygame.draw.line(surface,white,(w,w),(0,w))
+        pygame.draw.line(surface,white,(0,w),(0,1))
 
-# Game loop
+#Build body of snake
+#def snake_body:
+ #   pygame.draw.rect(display_window,black,)
 while not quit_game:
-    for event in pygame.event.get():
-        if event.type==pygame.QUIT:
-            quit_game=True
-
-    window.fill(white)
-    pygame.draw.rect(window,green,[x_snake,y_snake,snake_size,snake_size])
-    pygame.display.update()
-
-pygame.quit()
-quit()
-
+"snake.py" 47L, 998C                                                                                                        31,49          8%
