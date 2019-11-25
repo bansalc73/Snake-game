@@ -1,3 +1,4 @@
+import pygame
 pygame.init()
 
 #Game variables
@@ -27,10 +28,19 @@ def grid(w,rows,surface):
         pygame.draw.line(surface,white,(0,0),(w,0))
         pygame.draw.line(surface,white,(w,0),(w,w))
         pygame.draw.line(surface,white,(w,w),(0,w))
-        pygame.draw.line(surface,white,(0,w),(0,1))
+        pygame.draw.line(surface,white,(0,w),(0,0))
 
 #Build body of snake
 #def snake_body:
  #   pygame.draw.rect(display_window,black,)
 while not quit_game:
-"snake.py" 47L, 998C                                                                                                        31,49          8%
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT:
+            quit_game=True
+
+    grid(x,20,display_window)
+    pygame.display.update()
+
+pygame.quit()
+quit()
+
