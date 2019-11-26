@@ -67,10 +67,10 @@ def grid(w, rows, surface):
         pygame.draw.line(surface, white, (w, 0), (w, w))
     # draws lines for border
 
-    pygame.draw.rect(surface, c1, [0, 0, 30, 600])
+    """pygame.draw.rect(surface, c1, [0, 0, 30, 600])
     pygame.draw.rect(surface, c1, [0, 0, 600, 30])
     pygame.draw.rect(surface, c1, [0,570,600, 30])
-    pygame.draw.rect(surface, c1, [570,0, 30, 600])
+    pygame.draw.rect(surface, c1, [570,0, 30, 600])"""
 
     pygame.draw.line(surface, white, (0.5, 0.5), (w - 0.5, 0.5))
     pygame.draw.line(surface, white, (0.5, 0.5), (0.5, w - 0.5))
@@ -95,14 +95,46 @@ def get_food_coordinate(food_coordinates):
 
 ##############################
 # change the function name
-def check(food_coordinates, snake_coordinates, snake_length):
+def check_eaten(food_coordinates, snake_coordinates, snake_length):
     x1 = food_coordinates[0]
     y1 = food_coordinates[1]
-    x2 = snake_coordinates[0][0]
-    y2 = snake_coordinates[0][1]
+    x2 = snake_coordinates[-1][0]
+    y2 = snake_coordinates[-1][1]
     if (abs(x1 - x2) < 10 and abs(y1 - y2) < 10):
         snake_length[0] += 1
         get_food_coordinate(food_coordinates)
+#############################
+
+def check_hit(snake_coordinates,display_window):
+    x1 = snake_coordinates[-1][0]
+    y1 = snake_coordinates[-1][1]
+    if( (0>=x1 or x1>=570) or (0>=y1 or y1>=570)):
+        draw_dead_snake(snake_coordinates,display_window)
+        return 0
+    else:
+        return 1
+
+#############################
+
+def check_touch(snake_coordinates,display):
+    head = snake_coordinates[-1]
+    snake_body = snake_coordinates[:]
+    snake_body.remove(head)
+    if(head in snake_body):
+        draw_dead_snake(snake_coordinates, display)
+        return 0
+    else :
+        return 1
+
+
+#############################
+
+def draw_dead_snake(list_coor,display):
+    draw_eyes(snake_coordinates)
+    x1,y1 = list_coor[0]
+    pygame.draw.rect(display,white2,[x1,y1,30,30])
+    for x,y in list_coor:
+        pygame.draw.rect(display,white2,[x,y,30,30])
 
 
 ##############################
@@ -120,12 +152,22 @@ class snake:
     def draw_snake(self, list_coor, display):  # here list is for coordinates of body
         c = 1
         for x, y in list_coor:
+
+            #R,B,G = (0, 226, 255)
+            #color = (R+(c*10),B,G)
+            #pygame.draw.rect(display, color , [x, y, 30, 30])
+            #c += 1
+
             if(c==1):
-                c = 0
-                pygame.draw.rect(display, cyan, [x, y, 30, 30])
+               c = 0
+               pygame.draw.rect(display, cyan, [x, y, 30, 30])
             else:
                 c = 1
                 pygame.draw.rect(display, cyan2 ,[x,y,30,30])
+
+
+
+
 
     # head
 
@@ -167,21 +209,26 @@ while not quit_game:
     display_window.fill(black)
     food.draw_food(food_coordinates[0], food_coordinates[1])
 
-    check(food_coordinates, snake_coordinates, snake_length)
+    status1 = check_hit(snake_coordinates,display_window)
+    status2 = check_touch(snake_coordinates,display_window)
+    check_eaten(food_coordinates, snake_coordinates, snake_length)
     grid(x, 20, display_window)
     temp_list = []
     temp_list.append(snake_x)
     temp_list.append(snake_y)
 
-    snake_coordinates.append(temp_list)
-    if len(snake_coordinates) > snake_length[0]:
-        del snake_coordinates[0]
-    snake.draw_snake(snake_coordinates, display_window)
 
-    draw_eyes(snake_coordinates)
+
+    if(status1==1 and status2==1):
+        snake_coordinates.append(temp_list)
+        if len(snake_coordinates) > snake_length[0]:
+            del snake_coordinates[0]
+
+        snake.draw_snake(snake_coordinates, display_window)
+        draw_eyes(snake_coordinates)
 
     pygame.display.update()
-    refresh_rate.tick(15)
+    refresh_rate.tick(7)
 
 pygame.quit()
 quit()
