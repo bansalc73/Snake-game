@@ -40,6 +40,7 @@ score = [0]
 display_window = pygame.display.set_mode((x, y))
 pygame.display.set_caption("Snake Game")
 font = pygame.font.Font("myfont.ttf", 50)
+text_font = pygame.font.Font("myfont.ttf",25)
 pygame.display.update()
 refresh_rate = pygame.time.Clock()
 ########################
@@ -94,6 +95,9 @@ def grid(w, rows, surface):
 
 
 ##############################
+def show_text(text):
+    screen_text = text_font.render(text,True,red,None)
+    display_window.blit(screen_text,[300,300])
 
 def show_score(score):
     screen_text = font.render("SCORE : " + str(score[0]),True,white2,None)
@@ -149,6 +153,13 @@ def draw_dead_snake(list_coor,display):
     #pygame.draw.rect(display,white2,[x1,y1,30,30])
     for x,y in list_coor:
         pygame.draw.rect(display,white2,[x,y,30,30])
+
+def pause_game():
+    while True:
+        for event in pygame.event.get():
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_SPACE:
+                    return
 
 
 ##############################
@@ -211,20 +222,6 @@ class snake:
                 c = 1
             pygame.draw.rect(display, cyan2 ,[x,y,30,30])    """
 
-
-
-
-
-
-
-
-
-
-    # head
-
-    # body
-
-
 # Build body of snake
 # def snake_body:
 #   pygame.draw.rect(display_window,black,)
@@ -284,6 +281,10 @@ def main():
                 if event.key == pygame.K_UP and snake_velocity_y == 0:
                     snake_velocity_x = 0
                     snake_velocity_y = -velocity
+
+                if event.key == pygame.K_SPACE:
+                    show_text("PAUSE")
+                    pause_game()
         snake_x += snake_velocity_x
         snake_y += snake_velocity_y
         display_window.fill(black)
