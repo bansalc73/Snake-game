@@ -11,6 +11,7 @@ red = (255, 0, 0)       # food color
 cyan2 = (0,255,129)     # snake color 2
 white2 = (255,255,255)
 border_color = (25,185,105)
+score = [0]
 
 ########### rainbow snake color ######## color matches with documentation
 r1 = (1,162,255)
@@ -24,14 +25,8 @@ r5 = (255,100,78)
 x = 600
 y = 600
 
-
-
-
-
-
 # size of cube on screen
 block_size = 30
-score = [0]
 
 # global variable
 
@@ -44,7 +39,6 @@ text_font = pygame.font.Font("myfont.ttf",25)
 pygame.display.update()
 refresh_rate = pygame.time.Clock()
 ########################
-
 def draw_eyes(snake_coordinates):
     x = snake_coordinates[-1][0]
     y = snake_coordinates[-1][1]
@@ -52,12 +46,7 @@ def draw_eyes(snake_coordinates):
     pygame.draw.circle(display_window,black,(x+20,y+10),3,3)
     pygame.draw.circle(display_window, white2, (x + 10, y + 10), 1, 1)
     pygame.draw.circle(display_window, white2, (x + 20, y + 10), 1, 1)
-
 ##########################
-
-# draw grid
-# black background , white lines and white border
-
 def grid(w, rows, surface):
     sizeBtn = w // rows
     i = 0
@@ -72,44 +61,24 @@ def grid(w, rows, surface):
     pygame.draw.line(surface, white, (0, 570), (w, 570))
     # draws lines for border
 
-
-
     pygame.draw.rect(surface, border_color, [0, 0, 5, 600])
     pygame.draw.rect(surface, border_color, [0, 0, 600, 30])
     pygame.draw.rect(surface, border_color, [0,595 ,600, 5])
     pygame.draw.rect(surface, border_color, [595 ,0, 5, 600])
     pygame.draw.rect(surface, border_color, [0, 90, 600, 5])
 
-    """pygame.draw.line(surface, white, (0.5, 0.5), (w - 0.5, 0.5))
-    pygame.draw.line(surface, white, (0.5, 0.5), (0.5, w - 0.5))
-    pygame.draw.line(surface, white, (w - 0.5, 0.5), (w - 0.5, w - 0.5))
-    pygame.draw.line(surface, white, (0, w - 0.5), (w - 0.5, w - 0.5))
-    pygame.draw.line(surface, white, (1.5, 1.5), (w - 1.5, 1.5))
-    pygame.draw.line(surface, white, (1.5, 1.5), (1.5, w - 1.5))
-    pygame.draw.line(surface, white, (w - 1.5, 1.5), (w - 1.5, w - 1.5))
-    pygame.draw.line(surface, white, (0, w - 1.5), (w - 1.5, w - 1.5))"""
-
-
-
-
-
-
 ##############################
-def show_text(text):
-    screen_text = text_font.render(text,True,red,None)
-    display_window.blit(screen_text,[300,300])
-
+def show_text(text,color,x,y):
+    screen_text = text_font.render(text,True,color,None)
+    display_window.blit(screen_text,[x,y])
+##########################
 def show_score(score):
     screen_text = font.render("SCORE : " + str(score[0]),True,white2,None)
     display_window.blit(screen_text,[200,40])
-
 #############################
-
 def get_food_coordinate(food_coordinates):
     food_coordinates[0] = random.randrange(2, 19) * 30 + 5
     food_coordinates[1] = random.randrange(6, 19) * 30 + 5
-
-
 ##############################
 # change the function name
 def check_eaten(food_coordinates, snake_coordinates, snake_length):
@@ -122,7 +91,6 @@ def check_eaten(food_coordinates, snake_coordinates, snake_length):
         score[0] += 1
         get_food_coordinate(food_coordinates)
 #############################
-
 def check_hit(snake_coordinates,display_window):
     x1 = snake_coordinates[-1][0]
     y1 = snake_coordinates[-1][1]
@@ -131,9 +99,7 @@ def check_hit(snake_coordinates,display_window):
         return 0
     else:
         return 1
-
 #############################
-
 def check_touch(snake_coordinates,display):
     head = snake_coordinates[-1]
     snake_body = snake_coordinates[:]
@@ -143,24 +109,65 @@ def check_touch(snake_coordinates,display):
         return 0
     else:
         return 1
-
-
 #############################
-
 def draw_dead_snake(list_coor,display):
     #draw_eyes(snake_coordinates)
     #x1,y1 = list_coor[0]
     #pygame.draw.rect(display,white2,[x1,y1,30,30])
-    for x,y in list_coor:
-        pygame.draw.rect(display,white2,[x,y,30,30])
+    while True:
+        display_window.fill(black)
+        grid(600,20,display_window)
+        score[0]=0
+        for x,y in list_coor:
+            pygame.draw.rect(display,white2,[x,y,30,30])
+        show_text("Press Enter to play again",red,200,40)
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_RETURN:
+                    welcome()
+                if event.key==pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
+        pygame.display.update()
+        refresh_rate.tick(60)
+
+
+
+############################
+def welcome():
+    quit_game=False
+    while not quit_game:
+        display_window.fill(black)
+        show_text("Press Enter to play",white2,50,50)
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                quit_game=True
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_RETURN:
+                    main()
+        pygame.display.update()
+        refresh_rate.tick(60)
+
 
 def pause_game():
     while True:
+        #display_window.fill(black)
+        pygame.draw.rect(display_window,black,[5,30,590,60])
+        #grid(600,20,display_window)
+        show_text("PAUSE",cyan,250,35)
+        show_text("Press Space to continue",cyan,180,60)
         for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_SPACE:
                     return
-
+        pygame.display.update()
+        refresh_rate.tick(60)
 
 ##############################
 
@@ -174,7 +181,7 @@ class food:
     # image = pygame.image.load("food.png")
     # display_window.blit(image,(x,y))
     # food is eaten
-
+###################################
 
 class snake:
 
@@ -228,19 +235,6 @@ class snake:
 food = food()
 snake = snake()
 #########
-"""def button(text,button_x,button_y,width,height,bc,ac,Act=None):
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
-    if button_x<mouse[0]<button_x+width and button_y<mouse[1]<button_y+height:
-        pygame.draw.rect(display_window,ac,(button_x,button_y,width,height))
-        message_display(text,40,button_x+width/2,button_y+height/2)
-        if click[0]==1 and Act!=None:
-            if Act=="go":
-                countdown()
-            elif Act=="exit":
-                pygame.quit()
-                quit()
-            elif Act=="rules":"""
 ########### main ##############
 
 def main():
@@ -248,14 +242,11 @@ def main():
     snake_y = 300
     snake_coordinates = [[snake_x, snake_y]]
     eaten = 1
-
     snake_velocity_x = 0
     snake_velocity_y = 0
     snake_length = [1]
     velocity = 30
     food_coordinates = [245, 245]
-
-
 
     ##################
 
@@ -283,7 +274,6 @@ def main():
                     snake_velocity_y = -velocity
 
                 if event.key == pygame.K_SPACE:
-                    show_text("PAUSE")
                     pause_game()
         snake_x += snake_velocity_x
         snake_y += snake_velocity_y
@@ -302,19 +292,18 @@ def main():
         temp_list.append(snake_x)
         temp_list.append(snake_y)
 
-
-
         if(status1==1 and status2==1):
             snake_coordinates.append(temp_list)
             if len(snake_coordinates) > snake_length[0]:
                 del snake_coordinates[0]
-
             snake.draw_snake(snake_coordinates, display_window)
             draw_eyes(snake_coordinates)
+
+
 
         pygame.display.update()
         refresh_rate.tick(10)
 
     pygame.quit()
     quit()
-main()
+welcome()
