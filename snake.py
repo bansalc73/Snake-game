@@ -3,43 +3,38 @@ import random
 
 pygame.init()
 
-# Game variables
-white = (84, 62, 62)
-black = (0, 0, 0)
-cyan = (0, 226, 255)    #snake color 1
-red = (255, 0, 0)       # food color
-cyan2 = (0,255,129)     # snake color 2
-white2 = (255,255,255)
-border_color = (25,185,105)
-score = [0]
-
-########### rainbow snake color ######## color matches with documentation
+###### RGB values of color ########
+white=(84,62,62)
+black=(0,0,0)
+cyan=(0,226,255)    
+red=(255,0,0)       
+cyan2=(0,255,129)     
+white2=(255,255,255)
+border_color=(25,185,105)
 r1 = (1,162,255)
 r2 = (115,253,233)
 r3 = (136,250,78)
 r4 = (251,226,50)
 r5 = (255,100,78)
-###########
+##################################
 
-# screen size
-x = 600
-y = 600
-
-# size of cube on screen
-block_size = 30
-
-# global variable
+##### global variables ############
+x = 600  #screen width
+y = 600  #screen height
+score=[0]  #list containing game score
+block_size = 30  #size of snake element
+#####################################
 
 
-# Window and title display
-display_window = pygame.display.set_mode((x, y))
-pygame.display.set_caption("Snake Game")
-font = pygame.font.Font("myfont.ttf", 50)
-text_font = pygame.font.Font("myfont.ttf",25)
-pygame.display.update()
-refresh_rate = pygame.time.Clock()
+######## Window and title display #########
+display_window = pygame.display.set_mode((x, y))   #Diaplay game window
+pygame.display.set_caption("Snake Game")           #Game caption
+font = pygame.font.Font("myfont.ttf", 50)          #font we have used to display the score
+text_font = pygame.font.Font("myfont.ttf",25)      # font we have used to display text
+pygame.display.update()                         # updates the game window
+refresh_rate = pygame.time.Clock()              # refreshes the window
 ########################
-def draw_eyes(snake_coordinates):
+def draw_eyes(snake_coordinates): 
     x = snake_coordinates[-1][0]
     y = snake_coordinates[-1][1]
     pygame.draw.circle(display_window,black,(x+10,y+10),3,3)
@@ -72,9 +67,9 @@ def show_text(text,color,x,y):
     screen_text = text_font.render(text,True,color,None)
     display_window.blit(screen_text,[x,y])
 ##########################
-def show_score(score):
+def show_score(score,x,y):
     screen_text = font.render("SCORE : " + str(score[0]),True,white2,None)
-    display_window.blit(screen_text,[200,40])
+    display_window.blit(screen_text,[x,y])
 #############################
 def get_food_coordinate(food_coordinates):
     food_coordinates[0] = random.randrange(2, 19) * 30 + 5
@@ -117,16 +112,18 @@ def draw_dead_snake(list_coor,display):
     while True:
         display_window.fill(black)
         grid(600,20,display_window)
-        score[0]=0
         for x,y in list_coor:
             pygame.draw.rect(display,white2,[x,y,30,30])
-        show_text("Press Enter to play again",red,200,40)
+        show_text("Press  Enter  to play again",red,285,35)
+        show_text("Press  Escape to quit",red,310,60)
+        show_score(score,15,35)
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 pygame.quit()
                 quit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_RETURN:
+                    score[0]=0
                     welcome()
                 if event.key==pygame.K_ESCAPE:
                     pygame.quit()
@@ -141,13 +138,18 @@ def welcome():
     quit_game=False
     while not quit_game:
         display_window.fill(black)
-        show_text("Press Enter to play",white2,50,50)
+        #show_text("Press Enter to play",white2,50,50)
+        image=pygame.image.load("img.jpeg")
+        display_window.blit(image,(50,50))
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 quit_game=True
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_RETURN:
                     main()
+                if event.key==pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
         pygame.display.update()
         refresh_rate.tick(60)
 
@@ -157,13 +159,16 @@ def pause_game():
         #display_window.fill(black)
         pygame.draw.rect(display_window,black,[5,30,590,60])
         #grid(600,20,display_window)
-        show_text("PAUSE",cyan,250,35)
-        show_text("Press Space to continue",cyan,180,60)
+        show_text("PAUSE",cyan,270,35)
+        show_text("Press Space to continue",cyan,155,60)
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 pygame.quit()
                 quit()
             if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
                 if event.key==pygame.K_SPACE:
                     return
         pygame.display.update()
@@ -279,7 +284,7 @@ def main():
         snake_y += snake_velocity_y
         display_window.fill(black)
 
-        show_score(score)
+        show_score(score,200,40)
 
         check_eaten(food_coordinates, snake_coordinates, snake_length)
         food.draw_food(food_coordinates,snake_coordinates)
@@ -302,7 +307,7 @@ def main():
 
 
         pygame.display.update()
-        refresh_rate.tick(10)
+        refresh_rate.tick(7 + .2*score[0])
 
     pygame.quit()
     quit()
